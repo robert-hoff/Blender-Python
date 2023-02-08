@@ -2,6 +2,13 @@ import bpy
 import os
 import math
 
+'''
+This version preserves the names of imported files
+
++ assigns a newly created texture
+
+'''
+
 def degreesToRad(degrees):
     return math.pi * degrees / 180
 
@@ -46,49 +53,69 @@ def createRender(filenamepath):
     bpy.ops.render.render(write_still=True)
 
 
-# importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
-importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Mountains\\CPT\\NoLOD\\M\\'
+def importFbx(filenamepath):
+    bpy.ops.import_scene.fbx(filepath = filenamepath)
 
-texture_filenamepath = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\terrain-tiles\\terrain-colors.png'
+def getImageTextureFilepath():
+    for node in bpy.data.objects[0].data.materials[0].node_tree.nodes:
+        if node.name == 'Image Texture':
+            return node.image.filepath
+    return ''
+
+def setImageTexture(filenamepath):
+    for node in bpy.data.objects[0].data.materials[0].node_tree.nodes:
+        if node.name == 'Image Texture':
+            node.image.filepath = filenamepath
+
+def conditionMesh():
+    fbx_object = bpy.data.objects[0]
+    for v in fbx_object.data.vertex_colors:
+        fbx_object.data.vertex_colors.remove(v)
+    for node in fbx_object.data.materials[0].node_tree.nodes:
+        if node.name == 'Principled BSDF':
+            node.inputs['Alpha'].default_value = 1.0
+
+def exportFbx(filenamepath):
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z')
+
+
+# importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
+# importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
+importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\Low Poly Vegetation Pack\\Bonus Assets\\Meshes\\Terrain\\'
+import_texturesdir = 'Z:\\github\\Blender-Python\\'
+texture_filename = 'terrain-grass.png'
+texture_filenamepath = import_texturesdir+texture_filename
+
 exportdir_fbx = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\'
 exportdir_renders = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\renders\\'
 
-filecounter = 0
-filelabel = 'hill'
-FILELIMIT = 10
 
+filecounter = 0
+FILELIMIT = 1
 
 for filename_import in listFiles(importdir, 'fbx'):
     deleteAllObjects()
-
     filenamepath_import = importdir+filename_import;
     bpy.ops.import_scene.fbx(filepath = filenamepath_import)
-    for node in bpy.data.objects[0].data.materials[0].node_tree.nodes:
-        if node.name == 'Image Texture':
-            node.image.filepath = texture_filenamepath
-        if node.name == 'Principled BSDF':
-            node.inputs['Alpha'].default_value = 1.0
-    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 
-    export_filename_fbx = '{}{:03}.fbx'.format(filelabel,filecounter)
-    export_filenamepath_fbx = exportdir_fbx+export_filename_fbx
-    export_filename_render = '{}{:03}.png'.format(filelabel,filecounter)
-    export_filenamepath_render = exportdir_renders+export_filename_render
+    img_texture = getImageTextureFilepath()
+    if img_texture != '':
+        conditionMesh()
+        setImageTexture(texture_filenamepath)
+        fbx_name = filename_import[0:-4]
+        exportFbx(exportdir_fbx+fbx_name+'.fbx')
+        bpy.data.objects[0].select_set(True)
+        createCamera()
+        createLight()
+        bpy.context.scene.camera = bpy.data.objects['Camera']
+        bpy.ops.view3d.camera_to_view_selected()
+        createRender(exportdir_renders+fbx_name+'.png')
 
-    bpy.ops.export_scene.fbx(filepath=export_filenamepath_fbx, path_mode='STRIP', axis_up='Z')
-    
-    createLight()
-    createCamera()
-
-    bpy.context.scene.camera = bpy.data.objects['Camera']
-    bpy.data.objects[0].select_set(True)        
-    bpy.ops.view3d.camera_to_view_selected()    
-    createRender(export_filenamepath_render)
 
     filecounter += 1
     # exit early (if desirable)
     if filecounter == FILELIMIT:
         break
-
 
 

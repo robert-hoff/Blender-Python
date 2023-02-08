@@ -66,39 +66,80 @@ def setImageTexture(filenamepath):
             node.image.filepath = filenamepath
 
 def setAlpha():
-    for node in bpy.data.objects[0].data.materials[0].node_tree.nodes:
+    fbx_object = bpy.data.objects[0]
+    for node in fbx_object.data.materials[0].node_tree.nodes:
         if node.name == 'Principled BSDF':
             node.inputs['Alpha'].default_value = 1.0
 
+def removeVertexColors():
+    fbx_object = bpy.data.objects[0]
+    for v in fbx_object.data.vertex_colors:
+        fbx_object.data.vertex_colors.remove(v)
 
 
+'''
+# -- prints
+<bpy_struct, NodeSocketColor("Base Color")>
+<bpy_struct, NodeSocketFloatFactor("Subsurface")>
+# ...
+
+'''
+def showMaterialInputs():
+    fbx_object = bpy.data.objects[0]
+    for node in fbx_object.data.materials[0].node_tree.nodes:
+        if node.name == 'Principled BSDF':
+            for node_input in node.inputs:
+                print(node_input)
+
+def assignTexture(texturename, filenamepath):
+    fbx_object = bpy.data.objects[0]
+    for node in fbx_object.data.materials[0].node_tree.nodes:
+        if node.name == 'Principled BSDF':
+            mat = bpy.data.materials.new(name = texturename)
+            mat.use_nodes = True
+            bsdf = mat.node_tree.nodes['Principled BSDF']
+            texImage = mat.node_tree.nodes.new('ShaderNodeTexImage')
+            texImage.image = bpy.data.images.load(filenamepath)
+            mat.node_tree.links.new(bsdf.inputs['Base Color'], texImage.outputs['Color'])
+            fbx_object.data.materials[0] = mat
+
+def scaleAndTranslateObject():
+    fbx_object = bpy.data.objects[0]
+    fbx_object.select_set(True)
+    bpy.ops.transform.resize(value = (0.5, 0.5, 0.5))
+    bpy.ops.transform.translate(value = (0, 50, 0))
 
 def exportFbx(filenamepath):
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-    bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z')
+    bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z', use_tspace =True)
 
 
-importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\PolygonNature\\Models\\'
-import_texturesdir = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\polygon-nature\\'
-texture_filenamepath = import_texturesdir+'polygon-nature.png'
+# importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\PolygonNature\\Models\\'
+# import_texturesdir = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\polygon-nature\\'
+# texture_filenamepath = import_texturesdir+'polygon-nature.png'
 
 # importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
-# import_texturesdir = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\terrain-tiles\\'
-# texture_filenamepath = import_texturesdir+'terrain-colors.png'
+importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\Low Poly Vegetation Pack\\Bonus Assets\\Meshes\\Terrain\\'
+import_texturesdir = 'Z:\\github\\Blender-Python\\'
+texture_filename = 'terrain-grass.png'
+texture_filenamepath = import_texturesdir+texture_filename
 
-exportdir_fbx = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\'
-exportdir_renders = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\renders\\'
-
-
-
-filenamepath_singlefile = importdir+'SM_Plant_06.fbx'
-deleteAllObjects()
-bpy.ops.import_scene.fbx(filepath = filenamepath_singlefile)
+# exportdir_fbx = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\'
+# exportdir_renders = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\renders\\'
 
 
-fbx_object = bpy.data.objects[0]
-for v in fbx_object.data.vertex_colors:
-    fbx_object.data.vertex_colors.remove(v)
+# filenamepath_singlefile = importdir+'Terrain_m_06.fbx'
+# deleteAllObjects()
+# bpy.ops.import_scene.fbx(filepath = filenamepath_singlefile)
+# setAlpha()
+# assignTexture(texture_filename[0:-4], texture_filenamepath)
+# scaleAndTranslateObject()
+
+
+
+export_filenamepath1 = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\terrain-tiles\\terrain001.fbx'
+exportFbx(export_filenamepath1)
+
 
 
 

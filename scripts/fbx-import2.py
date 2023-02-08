@@ -78,20 +78,18 @@ def exportFbx(filenamepath):
     bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z')
 
 
-importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\PolygonNature\\Models\\'
-import_texturesdir = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\polygon-nature\\'
-texture_filenamepath = import_texturesdir+'polygon-nature.png'
-
 # importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
-# import_texturesdir = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\terrain-tiles\\'
-# texture_filenamepath = import_texturesdir+'terrain-colors.png'
+importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\Low Poly Vegetation Pack\\Bonus Assets\\Meshes\\Terrain\\'
+
+import_texturesdir = 'Z:\\github\\Blender-Python\\'
+texture_filenamepath = import_texturesdir+'terrain-grass.png'
 
 exportdir_fbx = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\'
 exportdir_renders = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\renders\\'
 
 
 filecounter = 0
-FILELIMIT = 1000
+FILELIMIT = 1
 
 for filename_import in listFiles(importdir, 'fbx'):
     deleteAllObjects()
@@ -110,6 +108,7 @@ for filename_import in listFiles(importdir, 'fbx'):
         bpy.context.scene.camera = bpy.data.objects['Camera']
         bpy.ops.view3d.camera_to_view_selected()
         createRender(exportdir_renders+fbx_name+'.png')
+
 
     filecounter += 1
     # exit early (if desirable)
