@@ -2,7 +2,7 @@
 # files or directories starting with underscore
 _*
 
-# blender files
+# blender files and textures
 *.blend
-
-
+*.png
+*.fbx

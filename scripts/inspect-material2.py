@@ -45,18 +45,17 @@ def showMaterialProperties():
     print('material.node_tree: {}'.format(material.node_tree))
 
 
+# <bpy_struct, ShaderNodeOutputMaterial("Material Output")>
+# <bpy_struct, ShaderNodeBsdfPrincipled("Principled BSDF")>
+# <bpy_struct, ShaderNodeTexImage("Image Texture")>
+# <bpy_struct, ShaderNodeNormalMap("Normal Map")>    
 def showNodeTree():
     material_node_tree = bpy.data.objects[0].data.materials[0].node_tree
     print('material.node_tree: {}'.format(material_node_tree))
     material_nodes = material_node_tree.nodes
     for node in material_nodes:
         print(node)
-    
-# <bpy_struct, ShaderNodeOutputMaterial("Material Output")>
-# <bpy_struct, ShaderNodeBsdfPrincipled("Principled BSDF")>
-# <bpy_struct, ShaderNodeTexImage("Image Texture")>
-# <bpy_struct, ShaderNodeNormalMap("Normal Map")>    
-    
+
     
 def showPrincipledBsdf():
     material_nodes = bpy.data.objects[0].data.materials[0].node_tree.nodes
@@ -124,6 +123,15 @@ def showPrincipledBsdfInputs():
     # ...    
 
 
+
+def showNormalMapNode():
+    material_nodes = bpy.data.objects[0].data.materials[0].node_tree.nodes
+    node_normal_map = material_nodes['Normal Map']
+    print(node_normal_map)
+
+
+
+
 # float
 def setRoughness(value):
     bpy.data.objects[0].data.materials[0].roughness = value
@@ -141,10 +149,7 @@ export_filenamepath1 = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\terrain-til
 export_filenamepath2 = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\terrain-tiles\\terrain002.fbx'
 def exportFbx(filenamepath):
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-    # bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z')
-    # bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z', use_tspace =True)
-    # bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z', use_active_collection=True)
-    bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z', axis_forward='X')    
+    bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z', use_active_collection=True)
 
 
 
@@ -161,8 +166,11 @@ print('---')
 # showPrincipledBsdfInputsBaseColor()
 
 # --- export either as terrain001.fbx or terrain002.fbx
-exportFbx(export_filenamepath1)
-exportFbx(export_filenamepath2)
+# exportFbx(export_filenamepath1)
+# exportFbx(export_filenamepath2)
+
+
+showNormalMapNode()
 
 
 
