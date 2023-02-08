@@ -1,0 +1,8 @@
+
+# files or directories starting with underscore
+_*
+
+# blender files
+*.blend
+
+
