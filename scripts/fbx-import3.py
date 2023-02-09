@@ -56,6 +56,10 @@ def createRender(filenamepath):
 def importFbx(filenamepath):
     bpy.ops.import_scene.fbx(filepath = filenamepath)
 
+def exportFbx(filenamepath):
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z')
+
 def getImageTextureFilepath():
     for node in bpy.data.objects[0].data.materials[0].node_tree.nodes:
         if node.name == 'Image Texture':
@@ -75,9 +79,47 @@ def conditionMesh():
         if node.name == 'Principled BSDF':
             node.inputs['Alpha'].default_value = 1.0
 
-def exportFbx(filenamepath):
-    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-    bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z')
+def assignTexture(texturename, filenamepath):
+    fbx_object = bpy.data.objects[0]
+    for node in fbx_object.data.materials[0].node_tree.nodes:
+        if node.name == 'Principled BSDF':
+            mat = bpy.data.materials.new(name = texturename)
+            mat.use_nodes = True
+            bsdf = mat.node_tree.nodes['Principled BSDF']
+            texImage = mat.node_tree.nodes.new('ShaderNodeTexImage')
+            texImage.image = bpy.data.images.load(filenamepath)
+            mat.node_tree.links.new(bsdf.inputs['Base Color'], texImage.outputs['Color'])
+            fbx_object.data.materials[0] = mat
+
+def scaleAndTranslateObject():
+    fbx_object = bpy.data.objects[0]
+    fbx_object.select_set(True)
+    bpy.ops.transform.resize(value = (0.5, 0.5, 0.5))
+    bpy.ops.transform.translate(value = (0, 50, 0))
+
+# float
+def setMaterialRoughness(value):
+    bpy.data.objects[0].data.materials[0].roughness = value
+
+# float
+def setMaterialSpecularIntensity(value):
+    bpy.data.objects[0].data.materials[0].specular_intensity = value
+
+def setBsdfRoughness(value):
+    bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF']
+    bsdf.inputs['Roughness'].default_value = value
+
+def setBsdfSpecular(value):
+    bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF']
+    bsdf.inputs['Specular'].default_value = value
+
+def setBsdfEmissionStrength(value):
+    bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF']
+    bsdf.inputs['Emission Strength'].default_value = value
+
+def setBsdfBaseColor(r, g, b, a):
+    bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF']
+    bsdf.inputs['Base Color'].default_value = (r, g, b, a)
 
 
 # importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
@@ -100,18 +142,27 @@ for filename_import in listFiles(importdir, 'fbx'):
     bpy.ops.import_scene.fbx(filepath = filenamepath_import)
 
     img_texture = getImageTextureFilepath()
-    if img_texture != '':
+    if img_texture == '':
         conditionMesh()
-        setImageTexture(texture_filenamepath)
+        setImageTexture(texture_filenamepath)        
         fbx_name = filename_import[0:-4]
-        exportFbx(exportdir_fbx+fbx_name+'.fbx')
+        assignTexture(texture_filename[0:-4], texture_filenamepath)
+        scaleAndTranslateObject()
+        setMaterialRoughness(0.69)
+        setMaterialSpecularIntensity(0.0)
+        setBsdfRoughness(0.69)
+        setBsdfSpecular(0)
+        setBsdfEmissionStrength(0)
+        setBsdfBaseColor(1,1,1,1)                
+        exportFbx(exportdir_fbx+fbx_name+'.fbx')    
+        
+        # -- zoom to object, create render
         bpy.data.objects[0].select_set(True)
         createCamera()
         createLight()
         bpy.context.scene.camera = bpy.data.objects['Camera']
         bpy.ops.view3d.camera_to_view_selected()
         createRender(exportdir_renders+fbx_name+'.png')
-
 
     filecounter += 1
     # exit early (if desirable)

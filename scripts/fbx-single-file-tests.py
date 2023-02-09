@@ -113,6 +113,30 @@ def exportFbx(filenamepath):
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     bpy.ops.export_scene.fbx(filepath=filenamepath, path_mode='STRIP', axis_up='Z', use_tspace =True)
 
+# float
+def setMaterialRoughness(value):
+    bpy.data.objects[0].data.materials[0].roughness = value
+
+# float
+def setMaterialSpecularIntensity(value):
+    bpy.data.objects[0].data.materials[0].specular_intensity = value
+
+def setBsdfRoughness(value):
+    bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF']
+    bsdf.inputs['Roughness'].default_value = value
+
+def setBsdfSpecular(value):
+    bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF']
+    bsdf.inputs['Specular'].default_value = value
+
+def setBsdfEmissionStrength(value):
+    bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF']
+    bsdf.inputs['Emission Strength'].default_value = value
+
+def setBsdfBaseColor(r, g, b, a):
+    bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF']
+    bsdf.inputs['Base Color'].default_value = (r, g, b, a)
+
 
 # importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\PolygonNature\\Models\\'
 # import_texturesdir = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\polygon-nature\\'
@@ -120,26 +144,27 @@ def exportFbx(filenamepath):
 
 # importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
 importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\Low Poly Vegetation Pack\\Bonus Assets\\Meshes\\Terrain\\'
-import_texturesdir = 'Z:\\github\\Blender-Python\\'
+import_texturesdir = 'Z:\\github\\Blender-Python\\asset-textures\\'
 texture_filename = 'terrain-grass.png'
 texture_filenamepath = import_texturesdir+texture_filename
 
-# exportdir_fbx = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\'
-# exportdir_renders = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\renders\\'
+exportdir_fbx = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\'
+exportdir_renders = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\renders\\'
+
+filenamepath_singlefile = importdir+'Terrain_m_06.fbx'
+#deleteAllObjects()
+#bpy.ops.import_scene.fbx(filepath = filenamepath_singlefile)
+#setAlpha()
+#assignTexture(texture_filename[0:-4], texture_filenamepath)
+#scaleAndTranslateObject()
+# setMaterialRoughness(0.69)
+# setMaterialSpecularIntensity(0.0)
+# setBsdfRoughness(0.69)
+# setBsdfSpecular(0)
+# setBsdfEmissionStrength(0)
+# setBsdfBaseColor(1,1,1,1)
 
 
-# filenamepath_singlefile = importdir+'Terrain_m_06.fbx'
-# deleteAllObjects()
-# bpy.ops.import_scene.fbx(filepath = filenamepath_singlefile)
-# setAlpha()
-# assignTexture(texture_filename[0:-4], texture_filenamepath)
-# scaleAndTranslateObject()
 
-
-
-export_filenamepath1 = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\terrain-tiles\\terrain001.fbx'
-exportFbx(export_filenamepath1)
-
-
-
+exportFbx(exportdir_fbx+'terrain005.fbx')
 
