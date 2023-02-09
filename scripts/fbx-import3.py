@@ -7,7 +7,7 @@ Preserves the names of imported files
 
 + assigns a newly created texture,
 assigning a new texture requires a bit more than just adding the image.
-Some of the material parameters like colors and normals may be subject 
+Some of the material parameters like colors and normals may be subject
 to use by different shaders.
 Currently the basic Monogame shader use the Principled BSDF 'Base Color' input
 as part of the diffuse coloration. Some other properties that are certain
@@ -54,8 +54,8 @@ def createCamera():
 def createRender(filenamepath):
     bpy.data.scenes['Scene'].camera = bpy.context.scene.objects['Camera']
     bpy.context.scene.render.filepath = filenamepath
-    bpy.context.scene.render.resolution_x = 480
-    bpy.context.scene.render.resolution_y = 270
+    bpy.context.scene.render.resolution_x = 720
+    bpy.context.scene.render.resolution_y = 405
     bpy.ops.render.render(write_still=True)
 
 
