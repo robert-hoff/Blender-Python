@@ -76,14 +76,6 @@ def removeVertexColors():
     for v in fbx_object.data.vertex_colors:
         fbx_object.data.vertex_colors.remove(v)
 
-
-'''
-# -- prints
-<bpy_struct, NodeSocketColor("Base Color")>
-<bpy_struct, NodeSocketFloatFactor("Subsurface")>
-# ...
-
-'''
 def showMaterialInputs():
     fbx_object = bpy.data.objects[0]
     for node in fbx_object.data.materials[0].node_tree.nodes:
@@ -91,7 +83,7 @@ def showMaterialInputs():
             for node_input in node.inputs:
                 print(node_input)
 
-def assignTexture(texturename, filenamepath):
+def createTexture(texturename, filenamepath):
     fbx_object = bpy.data.objects[0]
     for node in fbx_object.data.materials[0].node_tree.nodes:
         if node.name == 'Principled BSDF':
@@ -137,34 +129,40 @@ def setBsdfBaseColor(r, g, b, a):
     bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF']
     bsdf.inputs['Base Color'].default_value = (r, g, b, a)
 
+def setShadeSmooth():
+    fbx_object = bpy.data.objects[0]
+    fbx_object.select_set(True)
+    bpy.ops.object.shade_smooth()
+
+
+
 
 # importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\PolygonNature\\Models\\'
 # import_texturesdir = 'Z:\\github\\LSystemsMG\\LSystemsMG\\Content\\polygon-nature\\'
 # texture_filenamepath = import_texturesdir+'polygon-nature.png'
 
-# importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
-importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\Low Poly Vegetation Pack\\Bonus Assets\\Meshes\\Terrain\\'
+importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
+# importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\Low Poly Vegetation Pack\\Bonus Assets\\Meshes\\Terrain\\'
 import_texturesdir = 'Z:\\github\\Blender-Python\\asset-textures\\'
-texture_filename = 'terrain-grass.png'
-texture_filenamepath = import_texturesdir+texture_filename
+# texture_filename = 'terrain-grass.png'
+texture_filename = 'terrain-colors.png'
+
 
 exportdir_fbx = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\'
 exportdir_renders = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\renders\\'
 
-filenamepath_singlefile = importdir+'Terrain_m_06.fbx'
-#deleteAllObjects()
-#bpy.ops.import_scene.fbx(filepath = filenamepath_singlefile)
-#setAlpha()
-#assignTexture(texture_filename[0:-4], texture_filenamepath)
-#scaleAndTranslateObject()
-# setMaterialRoughness(0.69)
-# setMaterialSpecularIntensity(0.0)
-# setBsdfRoughness(0.69)
-# setBsdfSpecular(0)
-# setBsdfEmissionStrength(0)
-# setBsdfBaseColor(1,1,1,1)
+filenamepath_singlefile = importdir+'CPT_Terrain_M_b_09.fbx'
+deleteAllObjects()
+bpy.ops.import_scene.fbx(filepath = filenamepath_singlefile)
+
+setAlpha()
+setImageTexture(import_texturesdir+texture_filename)
+setShadeSmooth()
+
+createCamera()
+createLight()
 
 
 
-exportFbx(exportdir_fbx+'terrain005.fbx')
+# exportFbx(exportdir_fbx+'terrain005.fbx')
 

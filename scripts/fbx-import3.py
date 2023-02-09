@@ -3,9 +3,15 @@ import os
 import math
 
 '''
-This version preserves the names of imported files
+Preserves the names of imported files
 
-+ assigns a newly created texture
++ assigns a newly created texture,
+assigning a new texture requires a bit more than just adding the image.
+Some of the material parameters like colors and normals may be subject 
+to use by different shaders.
+Currently the basic Monogame shader use the Principled BSDF 'Base Color' input
+as part of the diffuse coloration. Some other properties that are certain
+include Specular and Alpha.
 
 '''
 
@@ -79,7 +85,7 @@ def conditionMesh():
         if node.name == 'Principled BSDF':
             node.inputs['Alpha'].default_value = 1.0
 
-def assignTexture(texturename, filenamepath):
+def createTexture(texturename, filenamepath):
     fbx_object = bpy.data.objects[0]
     for node in fbx_object.data.materials[0].node_tree.nodes:
         if node.name == 'Principled BSDF':
@@ -121,12 +127,19 @@ def setBsdfBaseColor(r, g, b, a):
     bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF']
     bsdf.inputs['Base Color'].default_value = (r, g, b, a)
 
+def setShadeSmooth():
+    fbx_object = bpy.data.objects[0]
+    fbx_object.select_set(True)
+    bpy.ops.object.shade_smooth()
+
 
 # importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
-# importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\Terrain\\CPT\\NoLOD\\M\\'
-importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\Low Poly Vegetation Pack\\Bonus Assets\\Meshes\\Terrain\\'
-import_texturesdir = 'Z:\\github\\Blender-Python\\'
-texture_filename = 'terrain-grass.png'
+# importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\Low Poly Vegetation Pack\\Bonus Assets\\Meshes\\Terrain\\'
+importdir = 'Z:\\dev\\unity3d\\Rock and Vegetation Pack\\Assets\\Low Poly Modular Terrain Pack\\Terrain_Assets\\Meshes\\River\\CPT\\NoLOD\\M\\'
+
+import_texturesdir = 'Z:\\github\\Blender-Python\\asset-textures\\'
+# texture_filename = 'terrain-grass.png'
+texture_filename = 'terrain-colors.png'
 texture_filenamepath = import_texturesdir+texture_filename
 
 exportdir_fbx = 'Z:\\active\\projects\\edinburgh-gamejam\\exportdir\\'
@@ -142,27 +155,28 @@ for filename_import in listFiles(importdir, 'fbx'):
     bpy.ops.import_scene.fbx(filepath = filenamepath_import)
 
     img_texture = getImageTextureFilepath()
-    if img_texture == '':
-        conditionMesh()
-        setImageTexture(texture_filenamepath)        
-        fbx_name = filename_import[0:-4]
-        assignTexture(texture_filename[0:-4], texture_filenamepath)
-        scaleAndTranslateObject()
-        setMaterialRoughness(0.69)
-        setMaterialSpecularIntensity(0.0)
-        setBsdfRoughness(0.69)
-        setBsdfSpecular(0)
-        setBsdfEmissionStrength(0)
-        setBsdfBaseColor(1,1,1,1)                
-        exportFbx(exportdir_fbx+fbx_name+'.fbx')    
-        
-        # -- zoom to object, create render
-        bpy.data.objects[0].select_set(True)
-        createCamera()
-        createLight()
-        bpy.context.scene.camera = bpy.data.objects['Camera']
-        bpy.ops.view3d.camera_to_view_selected()
-        createRender(exportdir_renders+fbx_name+'.png')
+    # if img_texture == '':
+    conditionMesh()
+    setImageTexture(texture_filenamepath)
+    fbx_name = filename_import[0:-4]
+    createTexture(texture_filename[0:-4], texture_filenamepath)
+    # scaleAndTranslateObject()
+    setMaterialRoughness(0.69)
+    setMaterialSpecularIntensity(0.0)
+    setBsdfRoughness(0.69)
+    setBsdfSpecular(0)
+    setBsdfEmissionStrength(0)
+    setBsdfBaseColor(1,1,1,1)
+    setShadeSmooth()
+    exportFbx(exportdir_fbx+fbx_name+'.fbx')
+
+    # -- zoom to object, create render
+    bpy.data.objects[0].select_set(True)
+    createCamera()
+    createLight()
+    bpy.context.scene.camera = bpy.data.objects['Camera']
+    bpy.ops.view3d.camera_to_view_selected()
+    createRender(exportdir_renders+fbx_name+'.png')
 
     filecounter += 1
     # exit early (if desirable)
