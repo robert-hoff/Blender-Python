@@ -12,14 +12,21 @@ def showMaterialCount():
 def showBpyFloat4(label, f4):
     print('{}: {}, {}, {}, {}'.format(label, f4[0], f4[1], f4[2], f4[3]))
 
+def formatBpyFloat4(f4):
+    return '{:.4f}, {:.4f}, {:.4f}, {:.4f}'.format(f4[0], f4[1], f4[2], f4[3])
+
+def formatBpyFloat3(f3):
+    return '{:.4f}, {:.4f}, {:.4f}'.format(f3[0], f3[1], f3[2])
+
 
 def showMaterialDiffuseColor():
     material = bpy.data.objects[0].data.materials[0]
     showBpyFloat4('diffuse_color', material.diffuse_color)
 
 def showMaterialProperties():
+    print('\n\n----- material properties')
     material = bpy.data.objects[0].data.materials[0]
-    showBpyFloat4('diffuse_color', material.diffuse_color)
+    print('diffuse_color: {}'.format(formatBpyFloat4(material.diffuse_color)))
     print('material.alpha_threshold: {}'.format(material.alpha_threshold))
     print('material.blend_method: {}'.format(material.blend_method))
     print('material.metallic: {}'.format(material.metallic))
@@ -30,7 +37,7 @@ def showMaterialProperties():
     print('material.specular_color: {}'.format(material.specular_color))
     print('material.specular_intensity: {}'.format(material.specular_intensity))
     print('material.use_nodes: {}'.format(material.use_nodes))
-    print('material.use_backface_culling: {}'.format(material.use_backface_culling))    
+    print('material.use_backface_culling: {}'.format(material.use_backface_culling))
     print('material.use_preview_world: {}'.format(material.use_preview_world))
     print('material.use_screen_refraction: {}'.format(material.use_screen_refraction))
     print('material.use_sss_translucency: {}'.format(material.use_sss_translucency))
@@ -39,9 +46,9 @@ def showMaterialProperties():
     print('material.cycles: {}'.format(material.cycles))
     print('material.grease_pencil: {}'.format(material.grease_pencil))
     print('material.is_grease_pencil: {}'.format(material.is_grease_pencil))
-    showBpyFloat4('line_color', material.line_color)    
+    # showBpyFloat4('line_color', material.line_color)
     print('material.line_priority: {}'.format(material.line_priority))
-    # print('material.lineart: {}'.format(material.lineart))
+    print('material.lineart: {}'.format(material.lineart))
     print('material.node_tree: {}'.format(material.node_tree))
 
 
@@ -119,10 +126,60 @@ def showPrincipledBsdfInputs():
     #    print(bsdf_inputs['Clearcoat Normal'].default_value)
     #    print(bsdf_inputs['Tangent'].default_value)
 
+def showPrincipledBsdfDefaultValues():
+    # bsdf_inputs = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF'].inputs
+    # bsdf_base_color = bsdf_inputs['Base Color']
+    # bsdf_subsurface = bsdf_inputs['Subsurface']
+    # bsdf_subsurface_radius = bsdf_inputs['Subsurface Radius']
+    # bsdf_subsurface_color = bsdf_inputs['Subsurface Color']
+    # bsdf_metallic = bsdf_inputs['Metallic']
+    # bsdf_specular = bsdf_inputs['Specular']
+    # bsdf_specular_tint = bsdf_inputs['Specular Tint']
+    # bsdf_roughness = bsdf_inputs['Roughness']
+    # bsdf_anisotropic = bsdf_inputs['Anisotropic']
+    # bsdf_anisotropic_rotation = bsdf_inputs['Anisotropic Rotation']
+    # bsdf_sheen = bsdf_inputs['Sheen']
+    # bsdf_sheen_tint = bsdf_inputs['Sheen Tint']
+    # bsdf_clearcoat = bsdf_inputs['Clearcoat']
+    # bsdf_clearcoat_roughness = bsdf_inputs['Clearcoat Roughness']
+    # bsdf_ior = bsdf_inputs['IOR']
+    # bsdf_transmission = bsdf_inputs['Transmission']
+    # bsdf_transmission_roughness = bsdf_inputs['Transmission Roughness']
+    # bsdf_emission = bsdf_inputs['Emission']
+    # bsdf_alpha = bsdf_inputs['Alpha']
+    # bsdf_normal = bsdf_inputs['Normal']
+    # bsdf_clearcoat_normal = bsdf_inputs['Clearcoat Normal']
+    # bsdf_tangent = bsdf_inputs['Tangent']
+    print('\n\n----- principled bsdf defaults')
+    bsdf = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF'].inputs
+    print("{:50s}{}".format("bsdf['Base Color'].default_value", formatBpyFloat4(bsdf['Base Color'].default_value)))
+    print("{:50s}{}".format("bsdf['Subsurface'].default_value", bsdf['Subsurface'].default_value))
+    print("{:50s}{}".format("bsdf['Subsurface Radius'].default_value", formatBpyFloat3(bsdf['Subsurface Radius'].default_value)))
+    print("{:50s}{}".format("bsdf['Subsurface Color'].default_value", formatBpyFloat4(bsdf['Subsurface Color'].default_value)))
+    print("{:50s}{}".format("bsdf['Metallic'].default_value", bsdf['Metallic'].default_value))
+    print("{:50s}{}".format("bsdf['Specular'].default_value", bsdf['Specular'].default_value))
+    print("{:50s}{}".format("bsdf['Specular Tint'].default_value", bsdf['Specular Tint'].default_value))
+    print("{:50s}{}".format("bsdf['Roughness'].default_value", bsdf['Roughness'].default_value))
+    print("{:50s}{}".format("bsdf['Anisotropic'].default_value", bsdf['Anisotropic'].default_value))
+    print("{:50s}{}".format("bsdf['Anisotropic Rotation'].default_value", bsdf['Anisotropic Rotation'].default_value))
+    print("{:50s}{}".format("bsdf['Sheen'].default_value", bsdf['Sheen'].default_value))
+    print("{:50s}{}".format("bsdf['Sheen Tint'].default_value", bsdf['Sheen Tint'].default_value))
+    print("{:50s}{}".format("bsdf['Clearcoat'].default_value", bsdf['Clearcoat'].default_value))
+    print("{:50s}{:.4f}".format("bsdf['Clearcoat Roughness'].default_value", bsdf['Clearcoat Roughness'].default_value))
+    print("{:50s}{:.4f}".format("bsdf['IOR'].default_value", bsdf['IOR'].default_value))
+    print("{:50s}{}".format("bsdf['Transmission'].default_value", bsdf['Transmission'].default_value))
+    print("{:50s}{}".format("bsdf['Transmission Roughness'].default_value", bsdf['Transmission Roughness'].default_value))
+    print("{:50s}{}".format("bsdf['Emission'].default_value", formatBpyFloat4(bsdf['Emission'].default_value)))
+    print("{:50s}{}".format("bsdf['Alpha'].default_value", bsdf['Alpha'].default_value))
+    print("{:50s}{}".format("bsdf['Normal'].default_value", formatBpyFloat3(bsdf['Normal'].default_value)))
+    print("{:50s}{}".format("bsdf['Clearcoat Normal'].default_value", formatBpyFloat3(bsdf['Clearcoat Normal'].default_value)))
+    print("{:50s}{}".format("bsdf['Tangent'].default_value", formatBpyFloat3(bsdf['Tangent'].default_value)))
 
-# def showPrincipledBsdfInputsBaseColor():
-    # ...    
 
+# float4
+def setPrincipledBsdfBaseColorDefaultValue(r, g, b, a):
+    bsdf_base_color = bpy.data.objects[0].data.materials[0].node_tree.nodes['Principled BSDF'].inputs['Base Color']
+    bsdf_base_color.default_value = (r, g, b, a)
 
 # float
 def setRoughness(value):

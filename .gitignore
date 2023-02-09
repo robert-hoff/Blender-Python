@@ -4,5 +4,6 @@ _*
 
 # blender files and textures
 *.blend
+*.blend*
 *.png
 *.fbx
